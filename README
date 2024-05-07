@@ -1,0 +1,61 @@
+
+# EvilnoVNC Installation Guide
+
+This guide provides instructions on how to install EvilnoVNC on your system using a bash script. EvilnoVNC is a Dockerized version of noVNC with various features and configurations for penetration testing.
+
+## Prerequisites
+
+Before installing EvilnoVNC, ensure you have the following prerequisites installed on your system:
+
+- Git
+- Docker
+
+## Installation
+
+To install EvilnoVNC, follow these steps:
+
+1. Clone the EvilnoVNC repository:
+
+    ```bash
+    git clone https://github.com/wanetty/EvilnoVNC
+    cd EvilnoVNC
+    ```
+
+2. Change ownership of the Downloads folder (assuming it's required):
+
+    ```bash
+    sudo chown -R 103 Downloads
+    ```
+
+3. Build the `evilnovnc` Docker image:
+
+    ```bash
+    sudo docker build -f evilnovnc.Dockerfile -t evilnovnc .
+    ```
+
+4. Build the `nginx` Docker image:
+
+    ```bash
+    sudo docker build -f nginx.Dockerfile -t evilnginx .
+    ```
+
+5. Installation completed.
+
+## Running EvilnoVNC
+
+Once installed, you can run EvilnoVNC using Docker. Here's how to run the containers:
+
+```bash
+sudo docker run -d --name evilnovnc -p 6080:6080 evilnovnc
+sudo docker run -d --name nginx -p 80:80 evilnginx
+Access EvilnoVNC via http://localhost:6080 in your web browser.
+```
+
+Additional Notes
+Ensure Docker is running and accessible.
+Modify Dockerfile or other configurations as needed for your environment.
+
+
+
+
+

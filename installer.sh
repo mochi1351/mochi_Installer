@@ -253,6 +253,20 @@ phish_install() {
 }
 
 
+# Function to call phishs.sh script
+phishs_install() {
+    # Check if phishs.sh script exists
+    if [ -f "phishs.sh" ]; then
+        echo "Calling phishs.sh script..."
+        chmod +x ./phish.sh
+        ./phishs.sh
+    else
+        echo "Error: phish.sh script not found."
+        exit 1
+    fi
+}
+
+
 
 setup_new_server() {
     # Install essential packages
@@ -383,6 +397,7 @@ Options:
   ${YELLOW}-pt,    --install-portainer${NC}         ${GREEN}Run install_portainer${NC}
   ${YELLOW}-go,    --gophish-install${NC}           ${GREEN}Run gophish_install${NC}
   ${YELLOW}-ph,    --phish-install${NC}             ${GREEN}Run phish_install${NC}
+  ${YELLOW}-phs,    --phishs-install${NC}             ${GREEN}Run phishs_install${NC}
 EOF
 }
 
@@ -437,6 +452,10 @@ while [[ "$#" -gt 0 ]]; do
             ;;
         -ph|--phish_install )
             --phish_install  
+            exit 0
+            ;;
+        -phs|--phishs_install )
+            --phishs_install  
             exit 0
             ;;
         *)
