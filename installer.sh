@@ -397,7 +397,7 @@ Options:
   ${YELLOW}-pt,    --install-portainer${NC}         ${GREEN}Run install_portainer${NC}
   ${YELLOW}-go,    --gophish-install${NC}           ${GREEN}Run gophish_install${NC}
   ${YELLOW}-ph,    --phish-install${NC}             ${GREEN}Run phish_install${NC}
-  ${YELLOW}-phs,    --phishs-install${NC}             ${GREEN}Run phishs_install${NC}
+  ${YELLOW}-phs,   --phishs-install${NC}            ${GREEN}Run phishs_install${NC}
 EOF
 }
 
