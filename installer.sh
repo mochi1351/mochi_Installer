@@ -27,6 +27,78 @@ install_docker_compose() {
 }
 
 
+
+# Function to stop and remove a specific Docker container and its associated image
+clean_specific_docker() {
+    read -p "Enter the ID of the Docker container or image you want to clean: " id
+
+    # Stop the container if it's running
+    docker stop "$id" >/dev/null 2>&1 || true
+
+    # Remove the container if it exists
+    docker rm "$id" >/dev/null 2>&1 || true
+
+    # Remove the image if it exists
+    docker rmi "$id" >/dev/null 2>&1 || true
+
+    echo "Docker container/image '$id' stopped, cleaned, and removed."
+}
+
+
+
+
+# Function to stop and remove Docker containers and images
+clean_docker() {
+    # Stop all running containers
+    docker stop $(docker ps -q) >/dev/null 2>&1 || true
+
+    # Remove all stopped containers
+    docker container prune -f >/dev/null 2>&1 || true
+
+    # Remove all dangling images
+    docker image prune -f >/dev/null 2>&1 || true
+
+    # Remove all images
+    docker rmi $(docker images -q) -f >/dev/null 2>&1 || true
+
+    echo "Docker containers and images stopped, cleaned, and removed."
+}
+
+
+
+
+# Function to install Ansible
+install_ansible() {
+    # Check if Ansible is already installed
+    if command -v ansible &>/dev/null; then
+        echo "Ansible is already installed."
+    else
+        # Install Ansible using the package manager (apt for Ubuntu/Debian, yum for CentOS/RHEL)
+        if command -v apt-get &>/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y ansible
+        elif command -v yum &>/dev/null; then
+            sudo yum install -y ansible
+        else
+            echo "Unsupported package manager. Please install Ansible manually."
+            exit 1
+        fi
+
+        # Verify installation
+        if command -v ansible &>/dev/null; then
+            echo "Ansible installed successfully."
+        else
+            echo "Failed to install Ansible. Please install it manually."
+            exit 1
+        fi
+    fi
+}
+
+
+
+
+
+
 run_nginx_proxy_manager() {
     mkdir dockerfile && cd dockerfile
     mkdir nginx_proxy_manager && cd nginx_proxy_manager
@@ -244,8 +316,8 @@ phish_install() {
     # Check if phish.sh script exists
     if [ -f "phish.sh" ]; then
         echo "Calling phish.sh script..."
-        chmod +x ./phish.sh
-        ./phish.sh
+       sudo  chmod +x ./phish.sh
+        bash ./phish.sh
     else
         echo "Error: phish.sh script not found."
         exit 1
@@ -258,8 +330,8 @@ phishs_install() {
     # Check if phishs.sh script exists
     if [ -f "phishs.sh" ]; then
         echo "Calling phishs.sh script..."
-        chmod +x ./phish.sh
-        ./phishs.sh
+        sudo chmod +x ./phish.sh
+         bash ./phishs.sh
     else
         echo "Error: phish.sh script not found."
         exit 1
@@ -386,18 +458,21 @@ Usage:
 
 Options:
   ${YELLOW}-h,     --help${NC}                      ${GREEN}Display this help message and exit${NC}
-  ${YELLOW}-d,     --install-docker${NC}            ${GREEN}Install Docker${NC}
-  ${YELLOW}-dc,    --install-docker-compose${NC}    ${GREEN}Installation of Docker Compose${NC}
-  ${YELLOW}-npm,   --nginx-proxy-manager${NC}       ${GREEN}Run nginx_proxy_manager${NC}
-  ${YELLOW}-sct,   --setup-cloudflare-tunnel${NC}   ${GREEN}Run setup_cloudflare_tunnel${NC}
-  ${YELLOW}-tgv,   --install-tigervnc${NC}          ${GREEN}Run install_tigervnc${NC}
-  ${YELLOW}-sh,    --setup-new-server${NC}          ${GREEN}Run setup_new_server${NC}
+  ${YELLOW}-d,     --install_docker${NC}            ${GREEN}Install Docker${NC}
+  ${YELLOW}-dc,    --install_docker_compose${NC}    ${GREEN}Installation of Docker Compose${NC}
+  ${YELLOW}-npm,   --nginx_proxy_manager${NC}       ${GREEN}Run nginx_proxy_manager${NC}
+  ${YELLOW}-sct,   --setup_cloudflare_tunnel${NC}   ${GREEN}Run setup_cloudflare_tunnel${NC}
+  ${YELLOW}-tgv,   --install_tigervnc${NC}          ${GREEN}Run install_tigervnc${NC}
+  ${YELLOW}-sh,    --setup_new_server${NC}          ${GREEN}Run setup_new_server${NC}
   ${YELLOW}-cf,    --configure${NC}                 ${GREEN}Run configure server${NC}
-  ${YELLOW}-n8,    --install-n8n${NC}               ${GREEN}Run install_n8n${NC}
-  ${YELLOW}-pt,    --install-portainer${NC}         ${GREEN}Run install_portainer${NC}
-  ${YELLOW}-go,    --gophish-install${NC}           ${GREEN}Run gophish_install${NC}
-  ${YELLOW}-ph,    --phish-install${NC}             ${GREEN}Run phish_install${NC}
-  ${YELLOW}-phs,   --phishs-install${NC}            ${GREEN}Run phishs_install${NC}
+  ${YELLOW}-n8,    --install_n8n${NC}               ${GREEN}Run install_n8n${NC}
+  ${YELLOW}-pt,    --install_portainer${NC}         ${GREEN}Run install_portainer${NC}
+  ${YELLOW}-go,    --gophish_install${NC}           ${GREEN}Run gophish_install${NC}
+  ${YELLOW}-ph,    --phish_install${NC}             ${GREEN}Run phish_install${NC}
+  ${YELLOW}-phs,   --phishs_install${NC}            ${GREEN}Run phishs_install${NC}
+  ${YELLOW}-cls,   --clean_docker${NC}              ${GREEN}Run clean_docker${NC}
+  ${YELLOW}-cld,   --clean_specific_docker${NC}     ${GREEN}Run clean_specific_docker${NC}
+  ${YELLOW}-As,    --install_ansible${NC}           ${GREEN}Run install_ansible${NC}
 EOF
 }
 
@@ -451,11 +526,23 @@ while [[ "$#" -gt 0 ]]; do
             exit 0
             ;;
         -ph|--phish_install )
-            --phish_install  
+            phish_install  
             exit 0
             ;;
         -phs|--phishs_install )
-            --phishs_install  
+            phishs_install  
+            exit 0
+            ;;
+        -cls|--clean_docker )
+             clean_docker  
+            exit 0
+            ;;
+        -cld|--clean_specific_docker )
+             clean_specific_docker 
+            exit 0
+            ;;
+        -As|--install_ansible )
+             install_ansible  
             exit 0
             ;;
         *)
